@@ -16,45 +16,44 @@
     },
     "BOT_NAME": {
       "description": "اسم البوت",
-      "required": false,
-      "value": ""
+      "required": false
     },
     "API_ID": {
       "description": "ايباي ايدي",
-      "required": true
+      "required": false
     },
     "HEROKU_API_KEY": {
       "description": "هيروكو ايباي",
-      "required": true
+      "required": false
     },
     "HEROKU_APP_NAME": {
       "description": "اسم تطبيق الهيروكو",
-      "required": true
+      "required": false
     },
     "API_HASH": {
       "description": "ايباي هاش",
-      "required": true
+      "required": false
     },
     "SUDO_USERS": {
       "description": "ايدبهات المطورين",
-      "required": true
+      "required": false
     },
     "DURATION_LIMIT": {
       "description": "اقصي مده لتشغيل الاغاني",
-      "required": true,
+      "required": false,
       "value": "15"
     },
     "BOT_USERNAME": {
       "description": "معرف البوت",
-      "required": true
+      "required": false
     },
     "OWNER_ID": {
       "description": "ايدي مالك البوت",
-      "required": true
+      "required": false
     },
     "ASSISTANT_USERNAME": {
       "description": "معرف الحساب المساعد",
-      "required": true
+      "required": false
     }     
   }
 }
