@@ -1,5 +1,5 @@
 import requests
-from pytgcalls import idle
+from pyrogram import idle
 from pyrogram import Client as Bot
 
 from Client.callsmusic import run
@@ -20,4 +20,4 @@ bot = Bot(
 
 bot.start()
 run()
-idle()
+idle() 
