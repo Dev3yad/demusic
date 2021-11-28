@@ -5,10 +5,10 @@ from pyrogram.errors import UserAlreadyParticipant
 import asyncio
 from helpers.decorators import authorized_users_only, errors
 from Client.callsmusic import client as USER
-from config import SUDO_USERS
+from config import SUDO_USERS, BOT_USERNAME, ASSISTANT_USERNAME
+from helpers.filters import command
 
-
-@Client.on_message(filters.command(["userbotjoin", "join"]) & ~filters.private & ~filters.bot)
+@Client.on_message(command(["ubjoin","userbotjoin","join", f"ubjoin@{BOT_USERNAME}", f"userbotjoin@{BOT_USERNAME}", f"join@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
 @authorized_users_only
 @errors
 async def addchannel(client, message):
@@ -17,68 +17,56 @@ async def addchannel(client, message):
         invitelink = await client.export_chat_invite_link(chid)
     except:
         await message.reply_text(
-            "<b>Add me admin first</b>",
+            "<b>أضفني كمسؤول في مجموعتك أولاً</b>",
         )
         return
 
     try:
         user = await USER.get_me()
     except:
-        user.first_name = "@DeCode_Assistant"
+        user.first_name = "الحساب المساعد"
 
     try:
         await USER.join_chat(invitelink)
-    except UserAlreadyParticipant:
+        await USER.reply("انضممت هنا كما طلبت")
         await message.reply_text(
-            f"<b>{user.first_name} Allready join this Group</b>",
+        "<b>انضم الحساب المساعد إلى محادثتك</b>",
+    )
+    except UserAlreadyParticipant:
+        await USER.send_message(message.chat.id, "انا موجود هنا")
+        await message.reply_text(
+            "<b>الحساب المساعد بالفعل في الدردشة الخاصة بك</b>",
         )
     except Exception as e:
         print(e)
         await message.reply_text(
-            f"<b>Flood Wait Error\n{user.first_name} can't join your group due to many join requests for userbot! Make sure the user is not banned in the group."
-            "\n\nOr manually add the Assistant bot to your Group and try again.</b>",
-        )
+                        f"حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD \n\nقم بي اضافه الحساب المساعد يدويا @{ASSISTANT_USERNAME}")
         return
-    await message.reply_text(
-        f"<b>{user.first_name} Join Seccsesfully</b>",
-    )
 
 
-@USER.on_message(filters.group & filters.command(["userbotleave"]))
+@USER.on_message(command(["ubleave","userbotleave","leave", f"ubleave@{BOT_USERNAME}", f"userbotleave@{BOT_USERNAME}", f"leave@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
 @authorized_users_only
 async def rem(USER, message):
     try:
+        await message.reply_text("سوف اغادر")
         await USER.leave_chat(message.chat.id)
-    except:
-        await message.reply_text(
-            "<b>Users cannot leave your group! Probably waiting for floodwaits.\n\nOr manually remove me from your Group</b>"
-        )
-
+    except Exception as e:
+        await message.reply_text("حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD \n\nقم بي طرد الحساب المساعد يدويا @{ASSISTANT_NAME}")
         return
 
 
-@Client.on_message(filters.command(["userbotleaveall"]))
+@Client.on_message(command(["ubleave","userbotleave","leave", f"ubleave@{BOT_USERNAME}", f"userbotleave@{BOT_USERNAME}", f"leave@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
 async def bye(client, message):
-    if message.from_user.id not in SUDO_USERS:
-        return
-
-    left = 0
-    failed = 0
-    lol = await message.reply("**Asisten Meninggalkan semua obrolan**")
-    async for dialog in USER.iter_dialogs():
-        try:
-            await USER.leave_chat(dialog.chat.id)
-            left += 1
-            await lol.edit(
-                f"Assistant leaving... Left: {left} chats. Failed: {failed} chats."
-            )
-        except:
-            failed += 1
-            await lol.edit(
-                f"Assistant leaving... Left: {left} chats. Failed: {failed} chats."
-            )
-        await asyncio.sleep(0.7)
-    await client.send_message(
-        message.chat.id, f"Left {left} chats. Failed {failed} chats."
-    )
-
+    if message.from_user.id in SUDO_USERS:
+        left=0
+        failed=0
+        lol = await message.reply("الحساب المساعد سوف يغادر جميع الدردشات")
+        async for dialog in USER.iter_dialogs():
+            try:
+                await USER.leave_chat(dialog.chat.id)
+                left=left+1
+                await lol.edit(f"الحساب المساعد ترك... {left} محادثة. فشل: {failed} محادثة.")
+            except:
+                failed=failed+1
+                await lol.edit(f"الحساب المساعد ترك... {left} محادثة. فشل: {failed} محادثة.")
+        await client.send_message(message.chat.id, f"الحساب المساعد خرج من {left} محادثة. فشل {failed} محادثة.")

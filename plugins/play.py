@@ -14,7 +14,7 @@ import yt_dlp
 from youtube_search import YoutubeSearch
 import converter
 from youtube import youtube
-from config import DURATION_LIMIT, que, SUDO_USERS
+from config import DURATION_LIMIT, que, SUDO_USERS, BOT_USERNAME, UPDATES_CHANNEL, GROUP_SUPPORT, ASSISTANT_USERNAME
 from cache.admins import admins as a
 from helpers.filters import command
 from helpers.decorators import errors, authorized_users_only
@@ -25,14 +25,11 @@ import aiofiles
 import ffmpeg
 from PIL import Image, ImageFont, ImageDraw
 from pytgcalls import StreamType
-from pytgcalls.types.input_stream import InputAudioStream
-from pytgcalls.types.input_stream import InputStream
+from pytgcalls.types.input_stream import InputAudioStream, InputStream
 
 # plus
 chat_id = None
-DISABLED_GROUPS = []
 useer = "NaN"
-ACTV_CALLS = []
 
 
 def cb_admin_check(func: Callable) -> Callable:
@@ -40,7 +37,7 @@ def cb_admin_check(func: Callable) -> Callable:
         admemes = a.get(cb.message.chat.id)
         if cb.from_user.id in admemes or cb.from_user.id in SUDO_USERS:
             return await func(client, cb)
-        await cb.answer("You ain't allowed!", show_alert=True)
+        await cb.answer("ليس مسموح لك بالصغط", show_alert=True)
         return
 
     return decorator
@@ -108,50 +105,6 @@ async def generate_cover(requested_by, title, views, duration, thumbnail):
     os.remove("temp.png")
     os.remove("background.png")
 
-
-@Client.on_message(
-    command("Maintainmode") & ~filters.edited & ~filters.bot & ~filters.private
-)
-@authorized_users_only
-async def hfmm(_, message):
-    global DISABLED_GROUPS
-    try:
-        user_id = message.from_user.id
-    except:
-        return
-    if len(message.command) != 2:
-        await message.reply_text(
-            "I only recognize `/Maintainmode on` and /Maintainmode `off only`"
-        )
-        return
-    status = message.text.split(None, 1)[1]
-    message.chat.id
-    if status in ["OFF", "Off", "off"]:
-        lel = await message.reply("`Processing...`")
-        if message.chat.id not in DISABLED_GROUPS:
-            await lel.edit("This Chat is not In maintainence mode")
-            return
-        DISABLED_GROUPS.remove(message.chat.id)
-        await lel.edit(
-            f"Maintainence Mode disabled In **{message.chat.title}** Chat"
-        )
-
-    elif status in ["ON", "On", "on"]:
-        lel = await message.reply("`Processing...`")
-
-        if message.chat.id in DISABLED_GROUPS:
-            await lel.edit("maintainence mode  already active in This Chat")
-            return
-        DISABLED_GROUPS.append(message.chat.id)
-        await lel.edit(
-            f"Maintainence mode is now enabled in **{message.chat.title}** Chat"
-        )
-    else:
-        await message.reply_text(
-            "I only recognize `/Maintainmode on` and /Maintainmode `off only"
-        )
-
-
 @Client.on_callback_query(filters.regex(pattern=r"^(cls)$"))
 @cb_admin_check
 @authorized_users_only
@@ -163,26 +116,16 @@ async def m_cb(b, cb):
     m_chat = cb.message.chat
 
     if type_ == "cls":
-        await cb.answer("Closed menu")
+        await cb.answer("تم اغلاء القائمة", show_alert=True)
         await cb.message.delete()
 
 
 # play
-@Client.on_message(
-    command("play")
-    & filters.group
-    & ~filters.edited
-    & ~filters.forwarded
-    & ~filters.via_bot
-)
+@Client.on_message(command(["play", f"play@{BOT_USERNAME}"]) & filters.group & ~filters.edited & ~filters.forwarded & ~filters.via_bot)
 async def play(_, message: Message):
-    chat_id = message.chat.id
     global que
     global useer
-    if message.chat.id in DISABLED_GROUPS:
-        await message.reply("**maintainence mode is on, ask admin to disable it!**")
-        return
-    lel = await message.reply("🔄 **Processing...**")
+    lel = await message.reply("🔄 **معالجة...**")
 
     administrators = await get_administrators(message.chat)
     chid = message.chat.id
@@ -190,7 +133,7 @@ async def play(_, message: Message):
     try:
         user = await USER.get_me()
     except:
-        user.first_name = "DeCode_Assistant"
+        user.first_name = "الحساب المساعد"
     usar = user
     wew = usar.id
     try:
@@ -199,13 +142,13 @@ async def play(_, message: Message):
         for administrator in administrators:
             if administrator == message.from_user.id:
                 await lel.edit(
-                    "<b>Remember to add Assistant to your channel</b>",
+                    "<b>تذكر ان تضيف الحساب المساعد</b>",
                 )
                 try:
                     invitelink = await _.export_chat_invite_link(chid)
                 except:
                     await lel.edit(
-                        "<b>Add me as admin of yor group first</b>",
+                        "<b>اعطني صلاحية دعوة المستخدمين لدعوة الحساب المساعد\nاو قم بي اضافتة يدويا @{ASSISTANT_USERNAME}</b>",
                     )
                     return
 
@@ -213,24 +156,23 @@ async def play(_, message: Message):
                     await USER.join_chat(invitelink)
                     await USER.send_message(
                         message.chat.id,
-                        "Assistant joined this group for playing music in VC",
+                        "انضممت هنا لتشغيل الموسيقي",
                     )
                     await lel.edit(
-                        "<b>Assistant joined this chat</b>",
+                        "<b>انضم الحساب المساعد الي مجموعك جاري تشغيل الموسيقي</b>",
                     )
 
                 except UserAlreadyParticipant:
                     pass
                 except Exception:
                     await lel.edit(
-                        f"<b>🛑 Flood Wait Error 🛑</b> \n\Hey {user.first_name}, assistant userbot couldn't join your group due to heavy join requests. Make sure userbot is not banned in group and try again later!"
-                    )
+                        f"حدث خطأ ما\n{Exception}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD\n\nقم بي اضافه الحساب المساعد يدويا @{ASSISTANT_USERNAME}")
     try:
         await USER.get_chat(chid)
         # lmoa = await client.get_chat_member(chid,wew)
     except:
         await lel.edit(
-            f"<i>Hey {user.first_name}, assistant userbot is not in this chat, ask admin to send /play command for first time to add it.</i>"
+            f"<b>هناك مشكلة لم استطيع دعوة الحساب المساعد ارسل الامر ( انضم ) حتا ينضم او قم بي اضافتة يدويا @{ASSISTANT_USERNAME}</b>"
         )
         return
 
@@ -244,23 +186,23 @@ async def play(_, message: Message):
     if audio:
         if round(audio.duration / 60) > DURATION_LIMIT:
             raise DurationLimitError(
-                f"❌ Videos longer than {DURATION_LIMIT} minutes aren't allowed to play!"
+                f"❌ مدة المقطع اطول من {DURATION_LIMIT} دقيقة لا يمكنني تشغيلها"
             )
 
         file_name = get_file_name(audio)
         title = file_name
-        thumb_name = "https://telegra.ph/file/a7adee6cf365d74734c5d.png"
+        thumb_name = "https://telegra.ph/file/cd0b87484429704c7b935.png"
         thumbnail = thumb_name
         duration = round(audio.duration / 60)
-        views = "Locally added"
+        views = "@YYYBD"
 
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🚨 Support", url="t.me/decodesupport"),
-                    InlineKeyboardButton("📡 Updates", url="t.me/DeeCodebots"),
+                    InlineKeyboardButton("مجموعة الدعم", url=f"t.me/{GROUP_SUPPORT}"),
+                    InlineKeyboardButton("قناة التحديثات", url=f"t.me/{UPDATES_CHANNEL}"),
                 ],
-                [InlineKeyboardButton(text="🗑 Close", callback_data="cls")],
+                [InlineKeyboardButton(text="اغلاق القائمة", callback_data="cls")],
             ]
         )
 
@@ -284,8 +226,6 @@ async def play(_, message: Message):
             duration = results[0]["duration"]
             url_suffix = results[0]["url_suffix"]
             views = results[0]["views"]
-            durl = url
-            durl = durl.replace("youtube", "youtubepp")
 
             secmul, dur, dur_arr = 1, 0, duration.split(":")
             for i in range(len(dur_arr) - 1, -1, -1):
@@ -295,25 +235,22 @@ async def play(_, message: Message):
             keyboard = InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("🚨 Support", url="t.me/decodesupport"),
-                        InlineKeyboardButton("📡 Updates", url="t.me/DeeCodebots"),
+                        InlineKeyboardButton("مجموعة الدعم", url=f"t.me/{GROUP_SUPPORT}"),
+                        InlineKeyboardButton("قناة التحديثات", url=f"t.me/{UPDATES_CHANNEL}"),
                     ],
-                    [InlineKeyboardButton(text="🗑 Close", callback_data="cls")],
+                    [InlineKeyboardButton(text="اغلاق القائمة", callback_data="cls")],
                 ]
             )
 
         except Exception as e:
-            title = "NaN"
-            thumb_name = "https://telegra.ph/file/a7adee6cf365d74734c5d.png"
-            duration = "NaN"
-            views = "NaN"
-            keyboard = InlineKeyboardMarkup(
-                [[InlineKeyboardButton(text="YouTube 🎬", url="https://youtube.com")]]
-            )
+            title = "@YYYBD"
+            thumb_name = "https://telegra.ph/file/cd0b87484429704c7b935.png"
+            duration = "@YYYBD"
+            views = "@YYYBD"
 
         if (dur / 60) > DURATION_LIMIT:
             await lel.edit(
-                f"❌ Videos longer than {DURATION_LIMIT} minutes aren't allowed to play!"
+                f"❌ مدة الفيديو اطول من {DURATION_LIMIT} دقيقة غير مسموح لي بالتشغيل"
             )
             return
         requested_by = message.from_user.first_name
@@ -322,12 +259,12 @@ async def play(_, message: Message):
     else:
         if len(message.command) < 2:
             return await lel.edit(
-                "🧐 **Song not found! Try searching with the correct title\nExample » /play In The End\n\nChannel : @DeCodeMusicBot**"
+                "لم اجد الموسيقي جرب كتابة الاسم بطريقة اخري"
             )
-        await lel.edit("🔎 **Finding the song...**")
+        await lel.edit("🔎 **البحث عن الموسيقي...**")
         query = message.text.split(None, 1)[1]
         # print(query)
-        await lel.edit("🎵 **Processing sounds...**")
+        await lel.edit("🎵 **معالجة الموسيقي...**")
         try:
             results = YoutubeSearch(query, max_results=1).to_dict()
             url = f"https://youtube.com{results[0]['url_suffix']}"
@@ -340,8 +277,6 @@ async def play(_, message: Message):
             duration = results[0]["duration"]
             url_suffix = results[0]["url_suffix"]
             views = results[0]["views"]
-            durl = url
-            durl = durl.replace("youtube", "youtubepp")
 
             secmul, dur, dur_arr = 1, 0, duration.split(":")
             for i in range(len(dur_arr) - 1, -1, -1):
@@ -349,37 +284,36 @@ async def play(_, message: Message):
                 secmul *= 60
 
         except Exception as e:
-            await lel.edit(
-                "❌ Song not found.\n\nTry another song or maybe spell it properly."
-            )
+            await lel.edit("🎵 **معالجة الموسيقي...**")
             print(str(e))
             return
 
         keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("🚨 Support", url="t.me/decodesupport"),
-                    InlineKeyboardButton("📡 Updates", url="t.me/DeeCodebots"),
+                    InlineKeyboardButton("مجموعة الدعم", url=f"t.me/{GROUP_SUPPORT}"),
+                    InlineKeyboardButton("قناة التحديثات", url=f"t.me/{UPDATES_CHANNEL}"),
                 ],
-                [InlineKeyboardButton(text="🗑 Close", callback_data="cls")],
+                [InlineKeyboardButton(text="اغلاق القائمة", callback_data="cls")],
             ]
         )
 
         if (dur / 60) > DURATION_LIMIT:
             await lel.edit(
-                f"❌ Videos longer than {DURATION_LIMIT} minutes aren't allowed to play!"
+                f"❌ مدة المقطع اطول من {DURATION_LIMIT} دقيقة غير مسموح لي بالتشغيل"
             )
             return
         requested_by = message.from_user.first_name
         await generate_cover(requested_by, title, views, duration, thumbnail)
         file_path = await converter.convert(youtube.download(url))
+    ACTV_CALLS = []
     for x in callsmusic.pytgcalls.active_calls:
         ACTV_CALLS.append(int(x.chat_id))
-    if int(chat_id) in ACTV_CALLS:
-        position = await queues.put(chat_id, file=file_path)
+    if int(message.chat.id) in ACTV_CALLS:
+        position = await queues.put(message.chat.id, file=file_path)
         await message.reply_photo(
             photo="final.png",
-            caption="**🎵 Song:** {}\n**🕒 Duration:** {} min\n**👤 Added By:** {}\n\n**#⃣ Queued Position:** {}".format(
+            caption="**🎵 الموسيقي :** {}\n**🕒 المدة :** {} دقيقة\n**👤 مطلوبة من قبل :** {}\n\n**#⃣ الدور :** {}".format(
                 title,
                 duration,
                 message.from_user.mention(),
@@ -389,7 +323,7 @@ async def play(_, message: Message):
         )
     else:
         await callsmusic.pytgcalls.join_group_call(
-                chat_id, 
+                message.chat.id, 
                 InputStream(
                     InputAudioStream(
                         file_path,
@@ -400,7 +334,7 @@ async def play(_, message: Message):
         await message.reply_photo(
             photo="final.png",
             reply_markup=keyboard,
-            caption="**🎵 Song:** {}\n**🕒 Duration:** {} min\n**👤 Added By:** {}\n\n**▶️ Now Playing at `{}`...**".format(
+            caption="**🎵 الموسيقي :** {}\n**🕒 المدة :** {} دقيقة\n**👤 مطلوبة من قبل :** {}\n\n**▶️ يشتغل الان : `{}`...**".format(
                 title, duration, message.from_user.mention(), message.chat.title
             ),
         )

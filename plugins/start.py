@@ -1,20 +1,20 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import BOT_NAME as bn
-from helpers.filters import other_filters2
+from helpers.filters import other_filters2, command
 from time import time
 from datetime import datetime
 from helpers.decorators import authorized_users_only
-from config import BOT_USERNAME, ASSISTANT_USERNAME
+from config import BOT_USERNAME, ASSISTANT_USERNAME, UPDATES_CHANNEL, GROUP_SUPPORT5
 
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.replace(microsecond=0).isoformat()
 TIME_DURATION_UNITS = (
-    ("week", 60 * 60 * 24 * 7),
-    ("day", 60 ** 2 * 24),
-    ("hour", 60 ** 2),
-    ("min", 60),
-    ("sec", 1),
+    ("اسبوع", 60 * 60 * 24 * 7),
+    ("يوم", 60 ** 2 * 24),
+    ("ساعة", 60 ** 2),
+    ("دقيقة", 60),
+    ("ثانيا", 1),
 )
 
 
@@ -29,28 +29,28 @@ async def _human_time_duration(seconds):
     return ", ".join(parts)
 
 
-@Client.on_message(other_filters2)
+@Client.on_message(command(["start"]) & other_filters2)
 async def start(_, message: Message):
-        await message.reply_text(
-        f"""**Hey, I'm {bn} 🎀
-I Cᴀɴ Pʟᴀʏ Mᴜsɪᴄ Iɴ Yᴏᴜʀ Gʀᴏᴜᴩ Vᴏɪᴄᴇ Cʜᴀᴛ. Dᴇᴠᴇʟᴏᴩᴇᴅ Bʏ [𝐃𝐞𝐂𝐨𝐝𝐞-𝐃𝐞𝐯𝐬](https://t.me/DeeCodeDevs).
-Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴩ Aɴᴅ Pʟᴀʏ Mᴜsɪᴄ Fʀᴇᴇʟʏ!**
-        """,
+        await message.reply_photo(
+        photo=f"https://t.me/{BOT_USERNAME}", 
+        caption=f"""**
+اهلا انا بوت اسمي {bn} 🎀
+استطيع تشغيل الاصوات في المحادثة الصوتية الخاصة بمجموعتك
+يمكنك اضافتي الي المجموعة و تشغيل الموسيقي و الاستمتاع
+ادعم ايضا الاوامر بي اللغة العربية
+**""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "𝐂𝐨𝐦𝐦𝐚𝐧𝐝 𝐋𝐢𝐬𝐭🧰", url="https://telegra.ph/text-10-24")
-                  ],[
-                    InlineKeyboardButton(
-                       " 𝐒𝐮𝐩𝐩𝐨𝐫𝐭👿", url="https://t.me/DecodeSupport"
+                       "مجموعة المساعدة", url=f"https://t.me/{GROUP_SUPPORT}"
                     ),
                     InlineKeyboardButton(
-                        "𝐔𝐩𝐝𝐚𝐭𝐞𝐬", url="https://t.me/DeecodeBots"
+                        "قناة لتحديثات", url=f"https://t.me/{UPDATES_CHANNEL}"
                     )
                 ],[
                     InlineKeyboardButton(
-                        "➕ 𝐀𝐝𝐝 𝐌𝐞 𝐓𝐨 𝐘𝐨𝐮𝐫 𝐆𝐫𝐨𝐮𝐩➕",
+                        "اضف البوت الي مجموعتك",
                         url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
                     )
                 ]

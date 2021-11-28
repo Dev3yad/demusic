@@ -3,6 +3,7 @@ import requests
 import aiohttp
 import yt_dlp
 
+from helpers.filters import command
 from pyrogram import Client, filters
 from youtube_search import YoutubeSearch
 from helpers.errors import capture_err
@@ -14,7 +15,7 @@ def time_to_seconds(time):
     return sum(int(x) * 60 ** i for i, x in enumerate(reversed(stringt.split(":"))))
 
 
-@Client.on_message(filters.command(["song"]))
+@Client.on_message(command(["song", f"song@{BOT_USERNAME}"]))
 def song(client, message):
 
     user_id = message.from_user.id
@@ -23,7 +24,7 @@ def song(client, message):
 
     query = "".join(" " + str(i) for i in message.command[1:])
     print(query)
-    m = message.reply("🔎 Finding the song...")
+    m = message.reply("🔎 جاري البحث عن الموسيقي...")
     ydl_opts = {"format": "bestaudio[ext=m4a]"}
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
@@ -41,17 +42,17 @@ def song(client, message):
 
     except Exception as e:
         m.edit(
-            "✖️ Found Nothing. Sorry.\n\nTry another keywork or maybe spell it properly."
+            f"حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD")
         )
         print(str(e))
         return
-    m.edit("`Downloading Song... Please wait ⏱`")
+    m.edit("جاري التحميل... ⏱")
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
-        rep = f"🎙 **Title**: [{title[:35]}]({link})\n🎬 **Source**: YouTube\n⏱️ **Duration**: `{duration}`\n👁‍🗨 **Views**: `{views}`\n📤 **By**: @{BOT_USERNAME} "
+        rep = f"🎙 **العنوان**: [{title[:35]}]({link})\n🎬 **المصدر**: YouTube\n⏱️ **المدة**: `{duration}`\n👁‍🗨 **المشاهدات**: `{views}`\n📤 **محملة بوسطة البوت**: @{BOT_USERNAME} "
         secmul, dur, dur_arr = 1, 0, duration.split(":")
         for i in range(len(dur_arr) - 1, -1, -1):
             dur += int(dur_arr[i]) * secmul
@@ -66,7 +67,7 @@ def song(client, message):
         )
         m.delete()
     except Exception as e:
-        m.edit("❌ Error")
+        m.edit(f"حدث خطأ ما\n{Exception}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD\n\nقم بي اضافه الحساب المساعد يدويا @{ASSISTANT_USERNAME}")
         print(e)
 
     try:
