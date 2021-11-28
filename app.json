@@ -1,10 +1,9 @@
 {
-  "name": "ayad-music",
+  "name": "3yad-music",
   "description": "تم تعريب الملف بوسطه @ahmedyad200",
   "keywords": ["music", "voicechat", "telegram"],
   "logo": "https://telegra.ph/file/21e8e309addc276362496.jpg",
   "repository": "#YYYBD",
-  "stack": "#YYYBD",
   "env": {
     "SESSION_NAME": {
       "description": "كود جلسه البايروجرام",
@@ -20,7 +19,7 @@
     },
     "API_ID": {
       "description": "ايباي ايدي",
-      "required": false
+      "required": true
     },
     "HEROKU_API_KEY": {
       "description": "هيروكو ايباي",
@@ -32,7 +31,7 @@
     },
     "API_HASH": {
       "description": "ايباي هاش",
-      "required": false
+      "required": true
     },
     "SUDO_USERS": {
       "description": "ايدبهات المطورين",
