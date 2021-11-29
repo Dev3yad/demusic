@@ -50,9 +50,17 @@
       "description": "ايدي مالك البوت",
       "required": false
     },
+    "UPDATES_CHANNEL": {
+      "description": "قناة التحديثات",
+      "required": false
+    },
+    "GROUP_SUPPORT": {
+      "description": "مجموعة المساعدة",
+      "required": false
+    },
     "ASSISTANT_USERNAME": {
       "description": "معرف الحساب المساعد",
       "required": false
-    }     
+    }
   }
 }
