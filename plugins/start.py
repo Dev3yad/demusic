@@ -5,7 +5,7 @@ from helpers.filters import other_filters2, command
 from time import time
 from datetime import datetime
 from helpers.decorators import authorized_users_only
-from config import BOT_USERNAME, ASSISTANT_USERNAME, UPDATES_CHANNEL, GROUP_SUPPORT5
+from config import BOT_USERNAME, ASSISTANT_USERNAME, UPDATES_CHANNEL, GROUP_SUPPORT
 
 START_TIME = datetime.utcnow()
 START_TIME_ISO = START_TIME.replace(microsecond=0).isoformat()
