@@ -172,7 +172,7 @@ async def play(_, message: Message):
         # lmoa = await client.get_chat_member(chid,wew)
     except:
         await lel.edit(
-            f"<b>هناك مشكلة لم استطيع دعوة الحساب المساعد ارسل الامر ( انضم ) حتا ينضم او قم بي اضافتة يدويا @{ASSISTANT_USERNAME}</b>"
+            f"<b>هناك مشكلة لم استطيع دعوة الحساب المساعد ارسل الامر ( /userbotjoin ) حتا ينضم او قم بي اضافتة يدويا @{ASSISTANT_USERNAME}</b>"
         )
         return
 
