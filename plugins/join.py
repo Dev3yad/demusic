@@ -33,7 +33,7 @@ async def addchannel(client, message):
         "<b>انضم الحساب المساعد إلى محادثتك</b>",
     )
     except UserAlreadyParticipant:
-        await USER.send_message(message.chat.id, "انا موجود هنا")
+        await USER.reply("انا موجود هنا")
         await message.reply_text(
             "<b>الحساب المساعد بالفعل في الدردشة الخاصة بك</b>",
         )
@@ -42,6 +42,40 @@ async def addchannel(client, message):
         await message.reply_text(
                         f"حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD \n\nقم بي اضافه الحساب المساعد يدويا @{ASSISTANT_USERNAME}")
         return
+
+@authorized_users_only
+@errors
+async def addchannel(client, message):
+    chid = message.chat.id
+    try:
+        invitelink = await client.export_chat_invite_link(chid)
+    except:
+        await message.reply_text(
+            "<b>لا امتلك صلاحية دعوة المستخدمين</b>",
+        )
+        return
+
+    try:
+        user = await USER.get_me()
+    except:
+        user.first_name = "الحساب المساعد0"
+
+    try:
+        await USER.join_chat(invitelink)
+    except UserAlreadyParticipant:
+        await USER.reply("انا موجود هنا")
+        await message.reply_text(
+            "<b>الحساب المساعد بالفعل في الدردشة الخاصة بك</b>",
+        )
+    except Exception as e:
+        print(e)
+        await message.reply_text(
+                        f"حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD \n\nقم بي اضافه الحساب المساعد يدويا @{ASSISTANT_USERNAME}")
+        return
+    await USER.reply("انضممت هنا كما طلبت")
+    await message.reply_text(
+        "<b>انضم الحساب المساعد إلى محادثتك</b>",
+    )
 
 
 @USER.on_message(command(["ubleave","userbotleave","leave", f"ubleave@{BOT_USERNAME}", f"userbotleave@{BOT_USERNAME}", f"leave@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
@@ -55,7 +89,7 @@ async def rem(USER, message):
         return
 
 
-@Client.on_message(command(["ubleave","userbotleave","leave", f"ubleave@{BOT_USERNAME}", f"userbotleave@{BOT_USERNAME}", f"leave@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
+@Client.on_message(command(["ubleaveall","userbotleaveall","leaveall", f"ubleaveall@{BOT_USERNAME}", f"userbotleaveall@{BOT_USERNAME}", f"leaveall@{BOT_USERNAME}"]) & ~filters.private & ~filters.bot)
 async def bye(client, message):
     if message.from_user.id in SUDO_USERS:
         left=0

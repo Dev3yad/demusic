@@ -55,6 +55,5 @@ async def start(_, message: Message):
                     )
                 ]
             ]
-        ),
-     disable_web_page_preview=True
+        )
     )
