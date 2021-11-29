@@ -17,40 +17,6 @@ async def addchannel(client, message):
         invitelink = await client.export_chat_invite_link(chid)
     except:
         await message.reply_text(
-            "<b>أضفني كمسؤول في مجموعتك أولاً</b>",
-        )
-        return
-
-    try:
-        user = await USER.get_me()
-    except:
-        user.first_name = "الحساب المساعد"
-
-    try:
-        await USER.join_chat(invitelink)
-        await USER.reply("انضممت هنا كما طلبت")
-        await message.reply_text(
-        "<b>انضم الحساب المساعد إلى محادثتك</b>",
-    )
-    except UserAlreadyParticipant:
-        await USER.reply("انا موجود هنا")
-        await message.reply_text(
-            "<b>الحساب المساعد بالفعل في الدردشة الخاصة بك</b>",
-        )
-    except Exception as e:
-        print(e)
-        await message.reply_text(
-                        f"حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD \n\nقم بي اضافه الحساب المساعد يدويا @{ASSISTANT_USERNAME}")
-        return
-
-@authorized_users_only
-@errors
-async def addchannel(client, message):
-    chid = message.chat.id
-    try:
-        invitelink = await client.export_chat_invite_link(chid)
-    except:
-        await message.reply_text(
             "<b>لا امتلك صلاحية دعوة المستخدمين</b>",
         )
         return
@@ -58,7 +24,7 @@ async def addchannel(client, message):
     try:
         user = await USER.get_me()
     except:
-        user.first_name = "الحساب المساعد0"
+        user.first_name = "الحساب المساعد"
 
     try:
         await USER.join_chat(invitelink)
