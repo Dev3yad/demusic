@@ -11,7 +11,7 @@ from config import BOT_USERNAME, ASSISTANT_USERNAME, UPDATES_CHANNEL, GROUP_SUPP
 @Client.on_message(command(["start"]) & other_filters2)
 async def start(_, message: Message):
         await message.reply_text(
-        """**اهلا انا بوت اسمي {bn}
+        f"""**اهلا انا بوت اسمي {bn}
 استطيع تشغيل الاصوات في المحادثة الصوتية الخاصة بمجموعتك
 يمكنك اضافتي الي المجموعة و تشغيل الموسيقي و الاستمتاع**""",
         reply_markup=InlineKeyboardMarkup(
@@ -19,7 +19,7 @@ async def start(_, message: Message):
                [
                     InlineKeyboardButton(
                         "تنصيب السورس",
-                        url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+                        url="https://t.me/YYYBR/2939",
                     )
                 ],[
                     InlineKeyboardButton(
