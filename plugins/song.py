@@ -43,7 +43,6 @@ def song(client, message):
     except Exception as e:
         m.edit(
             f"حدث خطأ ما\n{e}\n\nيرجي اعادة توجية هذة الرسالة الي المطور @YYYBD")
-        )
         print(str(e))
         return
     m.edit("جاري التحميل... ⏱")
