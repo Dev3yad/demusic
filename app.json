@@ -1,6 +1,6 @@
 {
   "name": "3yad-music",
-  "description": "تم تعريب الملف بوسطه @ahmedyad200",
+  "description": "تم تعريب الملف بوسطه @UUXFF",
   "keywords": ["music", "voicechat", "telegram"],
   "logo": "https://telegra.ph/file/21e8e309addc276362496.jpg",
   "repository": "#YYYBD",
@@ -18,11 +18,11 @@
       "required": false
     },
     "API_ID": {
-      "description": "ايباي ايدي",
+      "description": "ايبي ايدي",
       "required": true
     },
     "HEROKU_API_KEY": {
-      "description": "هيروكو ايباي",
+      "description"هيروكو ايبي",
       "required": false
     },
     "HEROKU_APP_NAME": {
@@ -34,7 +34,7 @@
       "required": true
     },
     "SUDO_USERS": {
-      "description": "ايدبهات المطورين",
+      "description": "ايديات المطورين",
       "required": false
     },
     "DURATION_LIMIT": {
